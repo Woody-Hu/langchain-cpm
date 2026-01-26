@@ -1,0 +1,25 @@
+# Tool Configuration
+tools:
+  # List of enabled tools
+  enabled: ["search", "file_reader", "code_executor"]
+  
+  # Tool-specific configurations
+  search:
+    # Search engine: google, bing, duckduckgo
+    engine: "google"
+    # Maximum number of search results
+    max_results: 5
+  
+  file_reader:
+    # Maximum file size to read in bytes
+    max_file_size: 1048576  # 1MB
+    # Supported file types
+    supported_types: [".txt", ".md", ".json", ".yaml", ".py", ".java", ".cpp"]
+  
+  code_executor:
+    # Maximum execution time in seconds
+    max_execution_time: 30
+    # Supported languages
+    supported_languages: ["python", "javascript", "bash"]
+    # Whether to enable sandboxing
+    sandboxed: true

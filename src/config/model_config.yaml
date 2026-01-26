@@ -1,0 +1,22 @@
+# Model Configuration
+model:
+  # Model name or path
+  name: "openbmb/AgentCPM-Explore"
+  # Local model path (if using local model)
+  path: ""
+  # Cache directory for storing model weights
+  cache_dir: ""
+  # Model parameters
+  params:
+    max_length: 2048
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 50
+    repetition_penalty: 1.0
+    do_sample: true
+  # Device configuration
+  device: "auto"  # auto, cpu, cuda, mps
+  # Quantization configuration
+  quantization:
+    enabled: false
+    bits: 4

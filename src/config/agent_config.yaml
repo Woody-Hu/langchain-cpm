@@ -1,0 +1,32 @@
+# Agent Configuration
+agent:
+  # Maximum number of steps the agent can take to complete a task
+  max_steps: 50
+  # Timeout for the agent in seconds
+  timeout: 300
+  # Planning configuration
+  planning:
+    # Planning strategy: basic, hierarchical, iterative
+    strategy: "basic"
+    # Maximum number of sub-tasks to generate
+    max_sub_tasks: 10
+  # Execution configuration
+  execution:
+    # Whether to use parallel execution for sub-tasks
+    parallel_execution: false
+    # Maximum number of parallel tasks
+    max_parallel_tasks: 3
+  # Reflection configuration
+  reflection:
+    # Whether to enable reflection
+    enabled: true
+    # Reflection frequency (every N steps)
+    frequency: 5
+  # Memory configuration
+  memory:
+    # Whether to enable memory
+    enabled: true
+    # Memory type: short_term, long_term, both
+    type: "both"
+    # Maximum number of memories to store
+    max_memories: 100

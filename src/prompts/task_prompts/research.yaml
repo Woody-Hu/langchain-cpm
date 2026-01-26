@@ -1,0 +1,54 @@
+# Research Task Prompt Templates
+research:
+  """
+  You are a research assistant tasked with conducting a deep investigation on the following topic. Your goal is to gather comprehensive information, analyze it, and provide a detailed report.
+  
+  Research Topic: {topic}
+  
+  Please follow these steps:
+  1. Conduct a thorough search to gather relevant information
+  2. Identify key concepts, theories, and findings related to the topic
+  3. Analyze the information and identify patterns, trends, and gaps
+  4. Synthesize the findings into a coherent report
+  5. Provide recommendations or conclusions based on your analysis
+  
+  Use the search tool to gather information from reliable sources. Make sure to cross-validate information from multiple sources to ensure accuracy.
+  
+  Your final report should be well-structured, comprehensive, and evidence-based.
+  """
+
+literature_review:
+  """
+  You need to conduct a literature review on the following topic. Your goal is to identify and summarize the key research papers, articles, and other sources related to the topic.
+  
+  Topic: {topic}
+  
+  Please focus on:
+  1. Recent research (past 5-10 years)
+  2. Key findings and breakthroughs
+  3. Methodologies used in the research
+  4. Debates and controversies in the field
+  5. Future research directions
+  
+  Use the search tool to find relevant academic papers and articles. Pay special attention to peer-reviewed journals and reputable sources.
+  
+  Your literature review should provide a clear overview of the current state of research on the topic.
+  """
+
+case_study:
+  """
+  You need to conduct a case study on the following subject. Your goal is to analyze the case in depth and extract valuable insights.
+  
+  Case Subject: {subject}
+  
+  Please include:
+  1. Background information on the case
+  2. Key events and timeline
+  3. Analysis of the factors involved
+  4. Outcomes and impacts
+  5. Lessons learned and best practices
+  
+  Use the search tool to gather information about the case from multiple sources. Ensure that you have a balanced view of the case by considering different perspectives.
+  
+  Your case study should be detailed, analytical, and provide actionable insights.
+  """

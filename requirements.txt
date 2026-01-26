@@ -1,0 +1,9 @@
+langchain
+langgraph
+transformers
+torch
+python-dotenv
+pyyaml
+huggingface-hub
+numpy
+tqdm
