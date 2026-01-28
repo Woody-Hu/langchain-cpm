@@ -43,6 +43,9 @@ class CPMModel:
     
     def _check_model_exists(self, model_name_or_path):
         """Check if the model already exists locally."""
+        if not model_name_or_path:
+            return False
+        
         # If it's a local path, check if it exists
         if os.path.exists(model_name_or_path):
             return True
@@ -83,6 +86,9 @@ class CPMModel:
     def load_model(self):
         """Load the AgentCPM model and tokenizer."""
         model_name_or_path = self.config.get("path", self.config.get("name"))
+        
+        if not model_name_or_path:
+            raise ValueError("Model name or path is required")
         
         # Download model if it doesn't exist locally
         self.download_model(model_name_or_path)
@@ -211,5 +217,4 @@ class CPMModel:
             "quantization": self.config.get("quantization", {})
         }
 
-# Create a global instance of CPMModel
-cpm_model = CPMModel()
+# 全局实例将在CPMAgent初始化时创建

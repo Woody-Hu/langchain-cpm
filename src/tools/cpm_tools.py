@@ -20,14 +20,15 @@ class CPMTools:
         Returns:
             A string containing the search results.
         """
-        # This is a placeholder implementation
-        # In a real implementation, this would call a search API
-        return f"Search results for '{query}' (showing {max_results} results):\n\n"
-        """1. Example search result 1 - This is a dummy result for demonstration purposes.\n"
-        """2. Example search result 2 - This is another dummy result.\n"
-        """3. Example search result 3 - This is a third dummy result.\n"
-        """4. Example search result 4 - This is a fourth dummy result.\n"
-        """5. Example search result 5 - This is a fifth dummy result.\n"
+        # 空实现，仅返回提示信息
+        return f"Search results for '{query}' (showing {max_results} results):\n\n" + """
+        # 这是一个空实现，实际搜索功能尚未实现
+        # 1. 搜索结果 1 - 示例结果
+        # 2. 搜索结果 2 - 示例结果
+        # 3. 搜索结果 3 - 示例结果
+        # 4. 搜索结果 4 - 示例结果
+        # 5. 搜索结果 5 - 示例结果
+        """
     
     @tool
     def file_reader(self, file_path: str) -> str:

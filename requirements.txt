@@ -1,5 +1,6 @@
 langchain
 langgraph
+deepagents
 transformers
 torch
 python-dotenv
