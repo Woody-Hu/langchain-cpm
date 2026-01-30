@@ -1,28 +1,27 @@
-# langchain-cpm
+# LangChainCPMAgent
 
-基于LangChain DeepAgents和AgentCPM模型搭建的智能体系统框架。
+基于LangChain DeepAgents和MiniCPM4-0.5B模型搭建的智能体系统框架。
 
 ## 项目介绍
 
-langchain-cpm是一个基于LangChain DeepAgents和AgentCPM-Explore模型的智能体系统框架，旨在帮助开发者快速构建和部署具有复杂任务处理能力的智能体应用。该框架支持多步骤任务的分解、计划、执行和反思，能够处理各种复杂的自然语言任务。
+LangChainCPMAgent是一个基于LangChain DeepAgents和OpenBMB的MiniCPM4-0.5B模型的智能体系统框架，专为性能数据查询和配置优化而设计。该框架利用DeepAgents的强大规划和执行能力，结合MiniCPM4-0.5B模型的优秀文本生成能力，为用户提供高质量的性能配置建议。
 
 ## 功能特性
 
-- **基于LangChain DeepAgents**：利用LangChain DeepAgents的强大规划和执行能力
-- **支持AgentCPM模型**：集成了OpenBMB的AgentCPM-Explore模型，具有强大的文本生成能力
-- **灵活的配置系统**：使用YAML格式的配置文件，支持模型、智能体和工具的灵活配置
+- **基于LangChain DeepAgents**：利用DeepAgents的强大规划和执行能力
+- **支持本地MiniCPM4-0.5B模型**：集成了OpenBMB的MiniCPM4-0.5B模型，使用本地推理，无需外部API密钥
+- **异步支持**：完全异步的实现，适合FastAPI等异步框架
+- **单例模型加载**：模型只加载一次，节省资源，提高性能
+- **性能数据工具**：内置性能数据查询工具，提供最佳配置建议
+- **灵活的配置系统**：使用YAML格式的配置文件，支持模型和工具的灵活配置
 - **模块化设计**：清晰的代码结构，便于扩展和定制
-- **多种工具支持**：内置搜索、文件读取和代码执行等工具
-- **提示词管理**：专门的提示词文件夹，支持YAML格式的提示词管理
-- **状态管理**：支持智能体状态的持久化和恢复
 
 ## 技术栈
 
 - **Python 3.10+**：主要开发语言
 - **LangChain**：LLM应用开发框架
-- **LangGraph**：DeepAgents的底层图执行和状态管理
-- **Transformers**：Hugging Face模型库，用于加载AgentCPM模型
-- **PyTorch**：深度学习框架，用于模型推理
+- **llama-cpp-python**：llama.cpp的Python绑定，用于模型推理
+- **ModelScope**：模型下载和管理
 - **PyYAML**：YAML配置文件解析
 - **python-dotenv**：环境变量管理
 
@@ -43,7 +42,7 @@ python -m venv venv
 
 # 激活虚拟环境
 # Windows
-env\Scripts\activate
+venv\Scripts\activate
 # Linux/macOS
 source venv/bin/activate
 ```
@@ -54,64 +53,107 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. **配置环境变量**
-
-复制`.env.example`文件为`.env`，并根据需要修改配置：
-
-```bash
-cp .env.example .env
-# 使用文本编辑器编辑.env文件
-```
-
-## 配置说明
+4. **配置说明**
 
 项目使用YAML格式的配置文件，位于`src/config`目录下：
 
 - **model_config.yaml**：模型配置，包括模型名称、路径、参数和量化设置
-- **agent_config.yaml**：智能体配置，包括最大步骤数、超时时间、计划策略和反思机制
-- **tool_config.yaml**：工具配置，包括启用的工具和工具特定的参数
-
-环境变量可以覆盖配置文件中的设置，主要环境变量包括：
-
-- **HUGGINGFACE_API_KEY**：Hugging Face API密钥
-- **MODEL_NAME**：模型名称，默认：`openbmb/AgentCPM-Explore`
-- **MODEL_PATH**：本地模型路径（如果使用本地模型）
-- **MODEL_MAX_LENGTH**：模型生成的最大长度
-- **MODEL_TEMPERATURE**：模型生成的温度参数
-- **AGENT_MAX_STEPS**：智能体的最大步骤数
-- **AGENT_TIMEOUT**：智能体的超时时间（秒）
 
 ## 使用示例
 
 ### 基本使用
 
 ```python
-from src.agents.cpm_agent import cpm_agent
-from src.utils.config import config_manager
-from src.utils.prompt_utils import prompt_manager
-
-# 加载配置和提示词
-config_manager.load_all_configs()
-config_manager.merge_with_env()
-prompt_manager.load_all_prompts()
+from src.agents.agent import agent
 
 # 定义任务
-task = "Explain the concept of object-oriented programming in Python"
+task = "What's the best config for Qwen/Qwen3-235B-A22B with vllm on nvidia/h800?"
 
-# 运行智能体
-result = cpm_agent.run(task)
+# 异步运行智能体
+import asyncio
+result = asyncio.run(agent(task))
 
 # 输出结果
 print(result)
 ```
 
-### 运行示例脚本
+### Web Server 使用
 
-项目提供了一个示例脚本，演示智能体的基本使用：
+LangChainCPMAgent提供了基于FastAPI的Web Server，支持HTTP API接口调用。
+
+#### 启动Web Server
 
 ```bash
-python examples/basic_usage.py
+# 直接运行
+python app.py
+
+# 或者使用uvicorn
+uvicorn app:app --host 0.0.0.0 --port 8000
 ```
+
+#### API接口说明
+
+- **健康检查接口**：`GET /health`
+  - 响应示例：
+  ```json
+  {"status": "healthy", "service": "LangChainCPMAgent"}
+  ```
+
+- **聊天接口**：`POST /chat`
+  - 请求体：
+  ```json
+  {"message": "What's the best config for Qwen/Qwen3-235B-A22B with vllm on nvidia/h800?"}
+  ```
+  - 响应示例：
+  ```json
+  {"response": "为了找到Qwen/Qwen3-235B-A22B的最佳配置，我们需要..."}
+  ```
+
+- **根路径**：`GET /`
+  - 响应示例：
+  ```json
+  {"message": "Welcome to LangChainCPMAgent API", "version": "1.0.0"}
+  ```
+
+#### 使用示例
+
+**使用curl**：
+
+```bash
+# 健康检查
+curl http://localhost:8000/health
+
+# 聊天
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What's the best config for Qwen/Qwen3-235B-A22B with vllm on nvidia/h800?"}'
+```
+
+**使用Python**：
+
+```python
+import requests
+
+# 健康检查
+response = requests.get("http://localhost:8000/health")
+print(response.json())
+
+# 聊天
+payload = {"message": "What's the best config for Qwen/Qwen3-235B-A22B with vllm on nvidia/h800?"}
+response = requests.post("http://localhost:8000/chat", json=payload)
+print(response.json())
+```
+
+#### Docker部署
+
+```bash
+# 构建镜像
+docker build -t langchain-cpm-agent .
+
+# 运行容器
+docker run -p 8000:8000 langchain-cpm-agent
+```
+
 
 ## 项目结构
 
@@ -120,30 +162,27 @@ langchain-cpm/
 ├── src/                     # 源代码目录
 │   ├── agents/              # 智能体相关代码
 │   │   ├── __init__.py
-│   │   └── cpm_agent.py     # AgentCPM智能体实现
+│   │   └── agent.py         # Agent智能体实现
 │   ├── models/              # 模型相关代码
 │   │   ├── __init__.py
-│   │   └── cpm_model.py     # AgentCPM模型封装
+│   │   └── agent_model.py   # MiniCPM4-0.5B模型封装和LangChain兼容包装器
 │   ├── tools/               # 工具相关代码
 │   │   ├── __init__.py
-│   │   └── cpm_tools.py     # 自定义工具实现
+│   │   └── cpm_tools.py     # 性能数据工具实现
 │   ├── utils/               # 工具函数
 │   │   ├── __init__.py
 │   │   ├── config.py        # 配置管理
-│   │   └── prompt_utils.py  # 提示词管理工具
-│   ├── prompts/             # 提示词文件夹
+│   │   └── prompt_utils.py  # 提示词管理
+│   ├── config/              # 配置文件目录
 │   │   ├── __init__.py
-│   │   ├── base_prompt.yaml # 基础提示词
-│   │   └── task_prompts/    # 任务特定提示词
-│   │       └── research.yaml # 研究任务提示词
-│   └── config/              # 配置文件目录
+│   │   └── model_config.yaml # 模型配置
+│   └── prompts/             # 提示词目录
 │       ├── __init__.py
-│       ├── model_config.yaml # 模型配置
-│       ├── agent_config.yaml # 智能体配置
-│       └── tool_config.yaml  # 工具配置
-├── examples/                # 示例应用
-│   └── basic_usage.py       # 基本使用示例
-├── .env.example             # 环境变量示例
+│       └── system_prompt.txt # 系统提示词
+├── app.py                   # FastAPI Web Server
+├── test_agent_integration.py # 集成测试
+├── test_web_server.py       # Web Server测试
+├── Dockerfile               # Docker构建文件
 ├── requirements.txt         # 项目依赖
 └── README.md                # 项目说明
 ```
@@ -159,13 +198,6 @@ langchain-cpm/
 ## 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
-
-## 联系方式
-
-如有问题或建议，请通过以下方式联系：
-
-- GitHub Issues：https://github.com/your-username/langchain-cpm/issues
-- Email：your-email@example.com
 
 ## 致谢
 

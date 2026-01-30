@@ -1,138 +1,132 @@
-import os
-import subprocess
 from langchain.tools import tool
-from src.utils.config import config_manager
 
-class CPMTools:
-    """Toolset for AgentCPM agent."""
+@tool
+def get_performance_data(model_name: str, engine_name: str, device_type: str) -> list:
+    """获取指定模型、引擎和设备类型的性能数据。
     
-    def __init__(self):
-        self.config = config_manager.get("tools", {})
+    Args:
+        model_name: 模型的完整名称，如 "Qwen/Qwen3-235B-A22B" 或 "Meta/Llama-3-70B-Instruct"
+        engine_name: 引擎名称，如 "vllm" 或 "tensorrt-llm"
+        device_type: 设备类型，如 "nvidia/h800" 或 "nvidia/h100"
     
-    @tool
-    def search(self, query: str, max_results: int = 5) -> str:
-        """Search the web for information about a given query.
-        
-        Args:
-            query: The search query.
-            max_results: The maximum number of results to return.
-        
-        Returns:
-            A string containing the search results.
-        """
-        # 空实现，仅返回提示信息
-        return f"Search results for '{query}' (showing {max_results} results):\n\n" + """
-        # 这是一个空实现，实际搜索功能尚未实现
-        # 1. 搜索结果 1 - 示例结果
-        # 2. 搜索结果 2 - 示例结果
-        # 3. 搜索结果 3 - 示例结果
-        # 4. 搜索结果 4 - 示例结果
-        # 5. 搜索结果 5 - 示例结果
-        """
+    Returns:
+        匹配输入参数的性能配置列表。
+    """
+    # Mock performance data with various configurations
+    mock_data = [
+        {
+            "id": 1,
+            "model_name": "Qwen/Qwen3-235B-A22B",
+            "engine_name": "vllm",
+            "device_type": "nvidia/h800",
+            "node_num": 1,
+            "device_per_node": 8,
+            "scenario": "",
+            "dtype": "bfloat16",
+            "quantization": "",
+            "gpu_memory_utilization": 0.9,
+            "data_parallel_size": 0,
+            "pipeline_parallel_size": 0,
+            "tensor_parallel_size": 8,
+            "enable_expert_parallel": False,
+            "enable_chunked_prefill": False,
+            "ttft": 476.1,
+            "tpot": 20.2,
+            "qps": 0.47,
+            "throughput": 968.73
+        },
+        {
+            "id": 2,
+            "model_name": "Qwen/Qwen3-235B-A22B",
+            "engine_name": "vllm",
+            "device_type": "nvidia/h100",
+            "node_num": 1,
+            "device_per_node": 8,
+            "scenario": "",
+            "dtype": "bfloat16",
+            "quantization": "",
+            "gpu_memory_utilization": 0.9,
+            "data_parallel_size": 0,
+            "pipeline_parallel_size": 0,
+            "tensor_parallel_size": 8,
+            "enable_expert_parallel": False,
+            "enable_chunked_prefill": True,
+            "ttft": 380.5,
+            "tpot": 15.3,
+            "qps": 0.62,
+            "throughput": 1250.45
+        },
+        {
+            "id": 3,
+            "model_name": "Qwen/Qwen3-72B-A22B",
+            "engine_name": "vllm",
+            "device_type": "nvidia/h800",
+            "node_num": 1,
+            "device_per_node": 4,
+            "scenario": "",
+            "dtype": "bfloat16",
+            "quantization": "",
+            "gpu_memory_utilization": 0.9,
+            "data_parallel_size": 0,
+            "pipeline_parallel_size": 0,
+            "tensor_parallel_size": 4,
+            "enable_expert_parallel": False,
+            "enable_chunked_prefill": False,
+            "ttft": 210.3,
+            "tpot": 8.7,
+            "qps": 1.15,
+            "throughput": 1850.22
+        },
+        {
+            "id": 4,
+            "model_name": "Meta/Llama-3-70B-Instruct",
+            "engine_name": "vllm",
+            "device_type": "nvidia/h800",
+            "node_num": 1,
+            "device_per_node": 4,
+            "scenario": "",
+            "dtype": "bfloat16",
+            "quantization": "",
+            "gpu_memory_utilization": 0.9,
+            "data_parallel_size": 0,
+            "pipeline_parallel_size": 0,
+            "tensor_parallel_size": 4,
+            "enable_expert_parallel": False,
+            "enable_chunked_prefill": False,
+            "ttft": 195.7,
+            "tpot": 7.9,
+            "qps": 1.26,
+            "throughput": 1980.56
+        },
+        {
+            "id": 5,
+            "model_name": "Qwen/Qwen3-235B-A22B",
+            "engine_name": "tensorrt-llm",
+            "device_type": "nvidia/h800",
+            "node_num": 1,
+            "device_per_node": 8,
+            "scenario": "",
+            "dtype": "bfloat16",
+            "quantization": "",
+            "gpu_memory_utilization": 0.9,
+            "data_parallel_size": 0,
+            "pipeline_parallel_size": 0,
+            "tensor_parallel_size": 8,
+            "enable_expert_parallel": False,
+            "enable_chunked_prefill": False,
+            "ttft": 420.8,
+            "tpot": 18.5,
+            "qps": 0.52,
+            "throughput": 1050.34
+        }
+    ]
     
-    @tool
-    def file_reader(self, file_path: str) -> str:
-        """Read the content of a file.
-        
-        Args:
-            file_path: The path to the file to read.
-        
-        Returns:
-            The content of the file as a string.
-        """
-        # Check if the file exists
-        if not os.path.exists(file_path):
-            return f"Error: File '{file_path}' not found."
-        
-        # Check file size
-        file_size = os.path.getsize(file_path)
-        max_size = self.config.get("file_reader", {}).get("max_file_size", 1048576)  # 1MB
-        if file_size > max_size:
-            return f"Error: File '{file_path}' is too large. Maximum size is {max_size} bytes."
-        
-        # Check file type
-        supported_types = self.config.get("file_reader", {}).get("supported_types", [".txt", ".md", ".json", ".yaml", ".py"])
-        file_ext = os.path.splitext(file_path)[1].lower()
-        if file_ext not in supported_types:
-            return f"Error: File type '{file_ext}' is not supported. Supported types: {', '.join(supported_types)}."
-        
-        # Read the file content
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read()
-            return content
-        except Exception as e:
-            return f"Error reading file '{file_path}': {str(e)}"
+    # Filter data by input parameters
+    filtered_data = [
+        item for item in mock_data
+        if item["model_name"] == model_name and
+           item["engine_name"] == engine_name and
+           item["device_type"] == device_type
+    ]
     
-    @tool
-    def code_executor(self, code: str, language: str = "python") -> str:
-        """Execute code and return the output.
-        
-        Args:
-            code: The code to execute.
-            language: The programming language of the code.
-        
-        Returns:
-            The output of the code execution.
-        """
-        # Check if the language is supported
-        supported_languages = self.config.get("code_executor", {}).get("supported_languages", ["python", "javascript", "bash"])
-        if language not in supported_languages:
-            return f"Error: Language '{language}' is not supported. Supported languages: {', '.join(supported_languages)}."
-        
-        # Execute the code
-        try:
-            if language == "python":
-                result = subprocess.run(
-                    ["python", "-c", code],
-                    capture_output=True,
-                    text=True,
-                    timeout=self.config.get("code_executor", {}).get("max_execution_time", 30)
-                )
-            elif language == "javascript":
-                result = subprocess.run(
-                    ["node", "-e", code],
-                    capture_output=True,
-                    text=True,
-                    timeout=self.config.get("code_executor", {}).get("max_execution_time", 30)
-                )
-            elif language == "bash":
-                result = subprocess.run(
-                    ["bash", "-c", code],
-                    capture_output=True,
-                    text=True,
-                    timeout=self.config.get("code_executor", {}).get("max_execution_time", 30)
-                )
-            else:
-                return f"Error: Language '{language}' is not supported."
-            
-            # Format the output
-            output = ""
-            if result.stdout:
-                output += f"STDOUT:\n{result.stdout}\n\n"
-            if result.stderr:
-                output += f"STDERR:\n{result.stderr}\n\n"
-            output += f"Return Code: {result.returncode}"
-            
-            return output
-        except subprocess.TimeoutExpired:
-            return f"Error: Code execution timed out after {self.config.get('code_executor', {}).get('max_execution_time', 30)} seconds."
-        except Exception as e:
-            return f"Error executing code: {str(e)}"
-    
-    def get_tools(self):
-        """Get the list of enabled tools."""
-        enabled_tools = self.config.get("enabled", ["search", "file_reader", "code_executor"])
-        tools = []
-        
-        if "search" in enabled_tools:
-            tools.append(self.search)
-        if "file_reader" in enabled_tools:
-            tools.append(self.file_reader)
-        if "code_executor" in enabled_tools:
-            tools.append(self.code_executor)
-        
-        return tools
-
-# Create a global instance of CPMTools
-tools = CPMTools()
+    return filtered_data

@@ -17,7 +17,13 @@ class ConfigManager:
         config_path = os.path.join(self.config_dir, f"{config_name}_config.yaml")
         if os.path.exists(config_path):
             with open(config_path, "r", encoding="utf-8") as f:
-                self.configs[config_name] = yaml.safe_load(f)
+                config_content = yaml.safe_load(f)
+                # 如果配置文件的内容是一个字典，并且包含与配置文件名称相同的键，
+                # 则直接使用该键的值作为配置，否则使用整个配置文件的内容
+                if isinstance(config_content, dict) and config_name in config_content:
+                    self.configs[config_name] = config_content[config_name]
+                else:
+                    self.configs[config_name] = config_content
         else:
             raise FileNotFoundError(f"Configuration file not found: {config_path}")
     
@@ -53,13 +59,18 @@ class ConfigManager:
             self.configs["model"]["name"] = self.get_env("MODEL_NAME", self.configs["model"].get("name"))
             self.configs["model"]["path"] = self.get_env("MODEL_PATH", self.configs["model"].get("path"))
             if "params" in self.configs["model"]:
-                self.configs["model"]["params"]["max_length"] = int(self.get_env("MODEL_MAX_LENGTH", self.configs["model"]["params"].get("max_length")))
-                self.configs["model"]["params"]["temperature"] = float(self.get_env("MODEL_TEMPERATURE", self.configs["model"]["params"].get("temperature")))
+                max_length = self.get_env("MODEL_MAX_LENGTH", self.configs["model"]["params"].get("max_length"))
+                if max_length is not None:
+                    self.configs["model"]["params"]["max_length"] = int(max_length)
+                temperature = self.get_env("MODEL_TEMPERATURE", self.configs["model"]["params"].get("temperature"))
+                if temperature is not None:
+                    self.configs["model"]["params"]["temperature"] = float(temperature)
         
-        # Merge agent configuration with environment variables
-        if "agent" in self.configs:
-            self.configs["agent"]["max_steps"] = int(self.get_env("AGENT_MAX_STEPS", self.configs["agent"].get("max_steps")))
-            self.configs["agent"]["timeout"] = int(self.get_env("AGENT_TIMEOUT", self.configs["agent"].get("timeout")))
+
 
 # Create a global instance of ConfigManager
 config_manager = ConfigManager()
+
+# Load all configurations when the module is imported
+config_manager.load_all_configs()
+config_manager.merge_with_env()

@@ -1,22 +1,32 @@
 # Model Configuration
 model:
   # Model name or path
-  name: "openbmb/AgentCPM-Explore"
+  name: "DevQuasar/openbmb.MiniCPM4-0.5B-GGUF"
   # Local model path (if using local model)
   path: ""
   # Cache directory for storing model weights
-  cache_dir: ""
+  cache_dir: "./models"
   # Model parameters
   params:
     max_length: 2048
     temperature: 0.7
     top_p: 0.95
     top_k: 50
-    repetition_penalty: 1.0
+    repetition_penalty: 1.1
     do_sample: true
   # Device configuration
   device: "auto"  # auto, cpu, cuda, mps
   # Quantization configuration
   quantization:
-    enabled: false
+    enabled: true
     bits: 4
+    type: "q4_k_s"  # Quantization type: q4_k_s, q4_k_m, q5_k_s, q5_k_m, q8_0
+  # Model download configuration
+  download:
+    # Only download once and reuse cached model
+    reuse_cache: true
+    # Force redownload model (set to true to force redownload)
+    force_redownload: false
+    # GGUF quantization versions to download (empty list means all versions)
+    # Example: ["q4_k_s", "q5_k_m"]
+    gguf_versions: ["q4_k_s"]
