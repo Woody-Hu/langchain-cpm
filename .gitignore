@@ -1,11 +1,11 @@
-# Model files
-models/
-model/
-weights/
-checkpoints/
-saved_models/
-trained_models/
-model_weights/
+# Model files (root level only)
+/models/
+/model/
+/weights/
+/checkpoints/
+/saved_models/
+/trained_models/
+/model_weights/
 
 # Model weight files
 *.pth
